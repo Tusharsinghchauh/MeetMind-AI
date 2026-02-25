@@ -30,10 +30,7 @@ services:
         - "frontend/**"
     envVars:
       - key: VITE_API_BASE_URL
-        fromService:
-          type: web
-          name: meetmind-api
-          property: url
+        sync: false
     routes:
       - type: rewrite
         source: /*
