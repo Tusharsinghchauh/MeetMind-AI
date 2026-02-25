@@ -19,9 +19,8 @@ services:
       - key: CORS_ORIGINS
         value: "*"
 
-  - type: web
+  - type: static
     name: meetmind-web
-    runtime: static
     buildCommand: cd frontend && npm ci && npm run build
     staticPublishPath: ./frontend/dist
     buildFilter:
