@@ -1,0 +1,40 @@
+services:
+  - type: web
+    name: meetmind-api
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /healthz
+    buildFilter:
+      paths:
+        - "*.py"
+        - "requirements.txt"
+        - ".python-version"
+    envVars:
+      - key: GOOGLE_API_KEY
+        sync: false
+      - key: PYTHON_VERSION
+        value: 3.13.4
+      - key: CORS_ORIGINS
+        value: "*"
+
+  - type: web
+    name: meetmind-web
+    runtime: static
+    plan: free
+    buildCommand: cd frontend && npm ci && npm run build
+    staticPublishPath: ./frontend/dist
+    buildFilter:
+      paths:
+        - "frontend/**"
+    envVars:
+      - key: VITE_API_BASE_URL
+        fromService:
+          type: web
+          name: meetmind-api
+          property: url
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
